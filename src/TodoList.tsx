@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { Todo } from "./types";
 import TodoItem from "./TodoItem";
+import CalendarView from "./CalendarView";
 
 type Props = {
     todos: Todo[];
@@ -10,9 +11,11 @@ type Props = {
 };
 
 type SortType = "deadline" | "priority";
+type ViewMode = "list" | "calendar";
 
 const TodoList = (props: Props) => {
     const [sortType, setSortType] = useState<SortType>("deadline");
+    const [viewMode, setViewMode] = useState<ViewMode>("list");
 
     const sortTodos = (todos: Todo[], sort: SortType): Todo[] => {
         const sorted = [...todos];
@@ -88,6 +91,16 @@ const TodoList = (props: Props) => {
                     優先度順
                 </button>
                 <button
+                    onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
+                    className={`px-3 py-1 rounded-md font-bold text-sm ${
+                        viewMode === "calendar"
+                            ? "bg-purple-500 text-white"
+                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                >
+                    {viewMode === "list" ? "カレンダー" : "リスト"}
+                </button>
+                <button
                     onClick={removeCompletedTodos}
                     className="ml-auto px-3 py-1 rounded-md bg-orange-500 text-white font-bold text-sm hover:bg-orange-600"
                 >
@@ -95,17 +108,29 @@ const TodoList = (props: Props) => {
                 </button>
             </div>
 
-            {/* Todo Items - Scrollable */}
-            <div className="flex-1 overflow-y-auto space-y-2 mt-3">
-                {todos.map((todo) => (
-                    <TodoItem
-                        key={todo.id}
-                        todo={todo}
-                        remove={props.remove}
+            {/* Content Area */}
+            {viewMode === "list" ? (
+                /* Todo Items - Scrollable */
+                <div className="flex-1 overflow-y-auto space-y-2 mt-3">
+                    {todos.map((todo) => (
+                        <TodoItem
+                            key={todo.id}
+                            todo={todo}
+                            remove={props.remove}
+                            updateIsDone={props.updateIsDone}
+                        />
+                    ))}
+                </div>
+            ) : (
+                /* Calendar View */
+                <div className="flex-1 overflow-y-auto mt-3 px-2">
+                    <CalendarView
+                        todos={props.todos}
                         updateIsDone={props.updateIsDone}
+                        remove={props.remove}
                     />
-                ))}
-            </div>
+                </div>
+            )}
         </div>
     );
 };

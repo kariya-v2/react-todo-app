@@ -123,7 +123,7 @@ const App = () => {
 
       <div className="mb-4">
         <WelcomeMessage
-          name="寝屋川タヌキ"
+          name="高専の宝"
           uncompletedCount={uncompletedCount}
         />
       </div>
